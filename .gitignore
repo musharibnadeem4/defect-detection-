@@ -1,0 +1,22 @@
+# Data (never committed; may be proprietary/large)
+data/*/*
+!data/*/.gitkeep
+# Model weights / artefacts
+models/
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.safetensors
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.ipynb_checkpoints/
+.pytest_cache/
+*.egg-info/
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/

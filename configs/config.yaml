@@ -1,0 +1,46 @@
+# Single source of truth. Nothing in code should hardcode class names, image size or paths.
+
+project:
+  seed: 42
+
+# Class names = sub-folder names under paths.raw_dir. Order defines label index.
+# The LAST entry is treated as the positive class (the one we want to catch).
+classes: [normal, defective]
+
+paths:
+  raw_dir: data/raw
+  processed_dir: data/processed
+  external_dir: data/external
+  manifest: data/processed/manifest.csv
+  figures_dir: reports/figures
+  models_dir: models
+
+image:
+  extensions: [.jpg, .jpeg, .png]
+  # Model input size. Provisional: chosen in Step 2 after looking at the native
+  # resolution reported by EDA. Do not rely on it in the data tooling.
+  size: 224
+
+# Perceptual-hash duplicate detection (used by inspect/prepare/EDA).
+duplicates:
+  hash_size: 8            # 8 -> 64-bit pHash
+  max_hamming: 8          # pHash candidate pairs: Hamming distance <= this (recall stage)
+  max_rmse: 3.0           # confirm candidates: RMSE of 64x64 grayscale thumbs (0-255) <= this
+
+# --- Stand-in dataset only (Kaggle casting). Replace/remove for the real client data. ---
+standin:
+  source_dir: data/external/casting/casting_data
+  class_map:              # source folder -> project class name
+    ok_front: normal
+    def_front: defective
+  n_images: 700
+  positive_ratio: 0.18    # fraction of defective images in the subsample
+
+# Hyperparameters: placeholders for Step 2.
+training:
+  batch_size: 32
+  epochs: 20
+  lr: 1.0e-4
+  weight_decay: 1.0e-4
+  val_fraction: 0.15
+  test_fraction: 0.15
