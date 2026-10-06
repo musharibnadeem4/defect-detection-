@@ -1,0 +1,412 @@
+{
+  "model_version": "20261007-004422_resnet18_none_224-0f824ffa",
+  "threshold": 0.7760080151863646,
+  "results": [
+    {
+      "file": "01_defect_correct_cast_def_0_7896.jpeg",
+      "role": "correct defect (random)",
+      "true_label": "defective",
+      "split": "test",
+      "source_filename": "cast_def_0_7896.jpeg",
+      "seen_in_training_by_deployed_model": false,
+      "response": {
+        "predicted_class": "defective",
+        "confidence": 0.9999651908874512,
+        "defect_probability": 0.9999651908874512,
+        "threshold_used": 0.7760080151863646,
+        "model_version": "20261007-004422_resnet18_none_224-0f824ffa",
+        "latency_ms": 29.0,
+        "request_id": "bd2a68a156804e8c8ee45d5bdfd3a1d1",
+        "input_quality": {
+          "ok": true,
+          "warnings": [],
+          "metrics": {
+            "mean_brightness": 140.8,
+            "sharpness": 162.21
+          }
+        }
+      }
+    },
+    {
+      "file": "02_defect_correct_cast_def_0_5311.jpeg",
+      "role": "correct defect (random)",
+      "true_label": "defective",
+      "split": "test",
+      "source_filename": "cast_def_0_5311.jpeg",
+      "seen_in_training_by_deployed_model": false,
+      "response": {
+        "predicted_class": "defective",
+        "confidence": 0.9964441657066345,
+        "defect_probability": 0.9964441657066345,
+        "threshold_used": 0.7760080151863646,
+        "model_version": "20261007-004422_resnet18_none_224-0f824ffa",
+        "latency_ms": 31.65,
+        "request_id": "87c925c7202243b2b08e14c6c08fc353",
+        "input_quality": {
+          "ok": true,
+          "warnings": [],
+          "metrics": {
+            "mean_brightness": 142.14,
+            "sharpness": 283.12
+          }
+        }
+      }
+    },
+    {
+      "file": "03_defect_correct_cast_def_0_3650.jpeg",
+      "role": "correct defect (random)",
+      "true_label": "defective",
+      "split": "test",
+      "source_filename": "cast_def_0_3650.jpeg",
+      "seen_in_training_by_deployed_model": false,
+      "response": {
+        "predicted_class": "defective",
+        "confidence": 0.999995231628418,
+        "defect_probability": 0.999995231628418,
+        "threshold_used": 0.7760080151863646,
+        "model_version": "20261007-004422_resnet18_none_224-0f824ffa",
+        "latency_ms": 35.38,
+        "request_id": "ffd837d33d0049a28d441d70b6622b04",
+        "input_quality": {
+          "ok": true,
+          "warnings": [],
+          "metrics": {
+            "mean_brightness": 142.85,
+            "sharpness": 129.38
+          }
+        }
+      }
+    },
+    {
+      "file": "04_defect_correct_cast_def_0_9119.jpeg",
+      "role": "correct defect (hardest in test: lowest score)",
+      "true_label": "defective",
+      "split": "test",
+      "source_filename": "cast_def_0_9119.jpeg",
+      "seen_in_training_by_deployed_model": false,
+      "response": {
+        "predicted_class": "defective",
+        "confidence": 0.9889785647392273,
+        "defect_probability": 0.9889785647392273,
+        "threshold_used": 0.7760080151863646,
+        "model_version": "20261007-004422_resnet18_none_224-0f824ffa",
+        "latency_ms": 39.7,
+        "request_id": "8076592244e9442dbf9adc71275bb629",
+        "input_quality": {
+          "ok": true,
+          "warnings": [],
+          "metrics": {
+            "mean_brightness": 146.62,
+            "sharpness": 171.18
+          }
+        }
+      }
+    },
+    {
+      "file": "05_normal_correct_cast_ok_0_3479.jpeg",
+      "role": "correct normal (random)",
+      "true_label": "normal",
+      "split": "test",
+      "source_filename": "cast_ok_0_3479.jpeg",
+      "seen_in_training_by_deployed_model": false,
+      "response": {
+        "predicted_class": "normal",
+        "confidence": 0.9999302801152226,
+        "defect_probability": 6.971988477744162e-05,
+        "threshold_used": 0.7760080151863646,
+        "model_version": "20261007-004422_resnet18_none_224-0f824ffa",
+        "latency_ms": 36.11,
+        "request_id": "feaf73fba57d4fbe8e4d33ac8766e9f0",
+        "input_quality": {
+          "ok": true,
+          "warnings": [],
+          "metrics": {
+            "mean_brightness": 153.87,
+            "sharpness": 246.66
+          }
+        }
+      }
+    },
+    {
+      "file": "06_normal_correct_cast_ok_0_239.jpeg",
+      "role": "correct normal (random)",
+      "true_label": "normal",
+      "split": "test",
+      "source_filename": "cast_ok_0_239.jpeg",
+      "seen_in_training_by_deployed_model": false,
+      "response": {
+        "predicted_class": "normal",
+        "confidence": 0.9954358232207596,
+        "defect_probability": 0.00456417677924037,
+        "threshold_used": 0.7760080151863646,
+        "model_version": "20261007-004422_resnet18_none_224-0f824ffa",
+        "latency_ms": 34.03,
+        "request_id": "8f5b300f89fb44389832ec264233d176",
+        "input_quality": {
+          "ok": true,
+          "warnings": [],
+          "metrics": {
+            "mean_brightness": 151.07,
+            "sharpness": 86.58
+          }
+        }
+      }
+    },
+    {
+      "file": "07_normal_correct_cast_ok_0_198.jpeg",
+      "role": "correct normal (random)",
+      "true_label": "normal",
+      "split": "test",
+      "source_filename": "cast_ok_0_198.jpeg",
+      "seen_in_training_by_deployed_model": false,
+      "response": {
+        "predicted_class": "normal",
+        "confidence": 0.9883342515677214,
+        "defect_probability": 0.011665748432278633,
+        "threshold_used": 0.7760080151863646,
+        "model_version": "20261007-004422_resnet18_none_224-0f824ffa",
+        "latency_ms": 40.41,
+        "request_id": "80b91c7c1e6d45bc86a78ecb95a834e8",
+        "input_quality": {
+          "ok": true,
+          "warnings": [],
+          "metrics": {
+            "mean_brightness": 156.57,
+            "sharpness": 164.67
+          }
+        }
+      }
+    },
+    {
+      "file": "08_normal_correct_cast_ok_0_7299.jpeg",
+      "role": "correct normal (hardest in test: highest score)",
+      "true_label": "normal",
+      "split": "test",
+      "source_filename": "cast_ok_0_7299.jpeg",
+      "seen_in_training_by_deployed_model": false,
+      "response": {
+        "predicted_class": "normal",
+        "confidence": 0.8294793516397476,
+        "defect_probability": 0.17052064836025238,
+        "threshold_used": 0.7760080151863646,
+        "model_version": "20261007-004422_resnet18_none_224-0f824ffa",
+        "latency_ms": 33.19,
+        "request_id": "710a420720404fc39415ea37772a628e",
+        "input_quality": {
+          "ok": true,
+          "warnings": [],
+          "metrics": {
+            "mean_brightness": 150.8,
+            "sharpness": 77.53
+          }
+        }
+      }
+    },
+    {
+      "file": "09_oof_false_negative_cast_def_0_6988.jpeg",
+      "role": "OOF false negative (Step 3)",
+      "true_label": "defective",
+      "split": "train",
+      "source_filename": "cast_def_0_6988.jpeg",
+      "seen_in_training_by_deployed_model": true,
+      "response": {
+        "predicted_class": "normal",
+        "confidence": 0.9930965937674046,
+        "defect_probability": 0.006903406232595444,
+        "threshold_used": 0.7760080151863646,
+        "model_version": "20261007-004422_resnet18_none_224-0f824ffa",
+        "latency_ms": 37.97,
+        "request_id": "140fafe55e7b46fd9c4516918166635a",
+        "input_quality": {
+          "ok": true,
+          "warnings": [],
+          "metrics": {
+            "mean_brightness": 151.86,
+            "sharpness": 78.46
+          }
+        }
+      }
+    },
+    {
+      "file": "10_oof_false_negative_cast_def_0_2949.jpeg",
+      "role": "OOF false negative (Step 3)",
+      "true_label": "defective",
+      "split": "train",
+      "source_filename": "cast_def_0_2949.jpeg",
+      "seen_in_training_by_deployed_model": true,
+      "response": {
+        "predicted_class": "normal",
+        "confidence": 0.9865960692986846,
+        "defect_probability": 0.013403930701315403,
+        "threshold_used": 0.7760080151863646,
+        "model_version": "20261007-004422_resnet18_none_224-0f824ffa",
+        "latency_ms": 36.69,
+        "request_id": "74f9920728224a438b2f73d2a68cd129",
+        "input_quality": {
+          "ok": true,
+          "warnings": [],
+          "metrics": {
+            "mean_brightness": 152.06,
+            "sharpness": 78.6
+          }
+        }
+      }
+    },
+    {
+      "file": "11_oof_false_positive_cast_ok_0_4994.jpeg",
+      "role": "OOF false positive (Step 3)",
+      "true_label": "normal",
+      "split": "train",
+      "source_filename": "cast_ok_0_4994.jpeg",
+      "seen_in_training_by_deployed_model": true,
+      "response": {
+        "predicted_class": "normal",
+        "confidence": 0.9888831842690706,
+        "defect_probability": 0.011116815730929375,
+        "threshold_used": 0.7760080151863646,
+        "model_version": "20261007-004422_resnet18_none_224-0f824ffa",
+        "latency_ms": 63.86,
+        "request_id": "f2291b43d79e42c487a835305878c5cb",
+        "input_quality": {
+          "ok": true,
+          "warnings": [],
+          "metrics": {
+            "mean_brightness": 151.96,
+            "sharpness": 72.74
+          }
+        }
+      }
+    },
+    {
+      "file": "12_oof_false_positive_cast_ok_0_7597.jpeg",
+      "role": "OOF false positive (Step 3)",
+      "true_label": "normal",
+      "split": "train",
+      "source_filename": "cast_ok_0_7597.jpeg",
+      "seen_in_training_by_deployed_model": true,
+      "response": {
+        "predicted_class": "normal",
+        "confidence": 0.9997575948218582,
+        "defect_probability": 0.0002424051781417802,
+        "threshold_used": 0.7760080151863646,
+        "model_version": "20261007-004422_resnet18_none_224-0f824ffa",
+        "latency_ms": 38.76,
+        "request_id": "8a3127c4f6ec415db6b99c7f85602bb3",
+        "input_quality": {
+          "ok": true,
+          "warnings": [],
+          "metrics": {
+            "mean_brightness": 154.19,
+            "sharpness": 309.34
+          }
+        }
+      }
+    },
+    {
+      "file": "13_oof_false_positive_cast_ok_0_5314.jpeg",
+      "role": "OOF false positive (Step 3)",
+      "true_label": "normal",
+      "split": "train",
+      "source_filename": "cast_ok_0_5314.jpeg",
+      "seen_in_training_by_deployed_model": true,
+      "response": {
+        "predicted_class": "normal",
+        "confidence": 0.9957309854216874,
+        "defect_probability": 0.004269014578312635,
+        "threshold_used": 0.7760080151863646,
+        "model_version": "20261007-004422_resnet18_none_224-0f824ffa",
+        "latency_ms": 36.27,
+        "request_id": "915e08ec9a8142c4b141049e4a0d6b8b",
+        "input_quality": {
+          "ok": true,
+          "warnings": [],
+          "metrics": {
+            "mean_brightness": 151.72,
+            "sharpness": 248.93
+          }
+        }
+      }
+    },
+    {
+      "file": "14_perturbed_blur_sigma2_cast_def_0_7896.png",
+      "role": "perturbed (blur_sigma2) copy of cast_def_0_7896.jpeg",
+      "true_label": "defective",
+      "split": "test",
+      "source_filename": "cast_def_0_7896.jpeg",
+      "seen_in_training_by_deployed_model": false,
+      "response": {
+        "predicted_class": "defective",
+        "confidence": 0.9877382516860962,
+        "defect_probability": 0.9877382516860962,
+        "threshold_used": 0.7760080151863646,
+        "model_version": "20261007-004422_resnet18_none_224-0f824ffa",
+        "latency_ms": 39.9,
+        "request_id": "0c5bfeab11a74d72906a5eacdb6cca8d",
+        "input_quality": {
+          "ok": false,
+          "warnings": [
+            "sharpness (Laplacian variance) 7.3 is below the training range [71.0, 354.1] (image may be blurred): input outside the training range; prediction may be less reliable"
+          ],
+          "metrics": {
+            "mean_brightness": 140.81,
+            "sharpness": 7.29
+          }
+        }
+      }
+    },
+    {
+      "file": "15_perturbed_noise_sigma25_cast_def_0_7896.png",
+      "role": "perturbed (noise_sigma25) copy of cast_def_0_7896.jpeg",
+      "true_label": "defective",
+      "split": "test",
+      "source_filename": "cast_def_0_7896.jpeg",
+      "seen_in_training_by_deployed_model": false,
+      "response": {
+        "predicted_class": "defective",
+        "confidence": 0.9830665588378906,
+        "defect_probability": 0.9830665588378906,
+        "threshold_used": 0.7760080151863646,
+        "model_version": "20261007-004422_resnet18_none_224-0f824ffa",
+        "latency_ms": 38.13,
+        "request_id": "f9add1a8db4740c389c7cd342f4a4a84",
+        "input_quality": {
+          "ok": false,
+          "warnings": [
+            "sharpness (Laplacian variance) 12014.3 is above the training range [71.0, 354.1] (image may be noisy or over-sharpened): input outside the training range; prediction may be less reliable"
+          ],
+          "metrics": {
+            "mean_brightness": 140.66,
+            "sharpness": 12014.3
+          }
+        }
+      }
+    },
+    {
+      "file": "16_perturbed_brightness_x1.3_cast_def_0_7896.png",
+      "role": "perturbed (brightness_x1.3) copy of cast_def_0_7896.jpeg",
+      "true_label": "defective",
+      "split": "test",
+      "source_filename": "cast_def_0_7896.jpeg",
+      "seen_in_training_by_deployed_model": false,
+      "response": {
+        "predicted_class": "defective",
+        "confidence": 0.9559530019760132,
+        "defect_probability": 0.9559530019760132,
+        "threshold_used": 0.7760080151863646,
+        "model_version": "20261007-004422_resnet18_none_224-0f824ffa",
+        "latency_ms": 39.44,
+        "request_id": "9d70cb31f5ba4c8994c51373adf35655",
+        "input_quality": {
+          "ok": false,
+          "warnings": [
+            "mean brightness 181.3 is above the training range [129.5, 158.3]: input outside the training range; prediction may be less reliable"
+          ],
+          "metrics": {
+            "mean_brightness": 181.27,
+            "sharpness": 264.99
+          }
+        }
+      }
+    }
+  ]
+}

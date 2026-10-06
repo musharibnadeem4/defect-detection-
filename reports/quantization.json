@@ -1,0 +1,72 @@
+{
+  "split": "validation",
+  "n": 105,
+  "threshold_fixed": 0.7760080151863646,
+  "calibration": "100 train images (static only)",
+  "fp32": {
+    "size_mb": 44.700657,
+    "pr_auc": 1.0,
+    "recall@deployed": 1.0,
+    "precision@deployed": 1.0,
+    "recall@0.5": 1.0,
+    "precision@0.5": 1.0
+  },
+  "methods": {
+    "dynamic": {
+      "status": "not usable: NotImplemented: [ONNXRuntimeError] : 9 : NOT_IMPLEMENTED : Could not find an implementation for ConvInteger(10) node with name '/conv1/Conv_quant'"
+    },
+    "static_qdq": {
+      "status": "ok",
+      "size_mb": 11.231601,
+      "max_abs_logit_diff": 4.083651065826416,
+      "mean_abs_logit_diff": 2.047663450241089,
+      "max_abs_prob_diff": 0.8528244644403458,
+      "decision_flips_at_deployed_threshold": 2,
+      "decision_flips_at_0_5": 8,
+      "pr_auc": 0.9973684210526313,
+      "recall_at_deployed": 1.0,
+      "precision_at_deployed": 0.9047619047619048,
+      "recall_at_0_5": 1.0,
+      "precision_at_0_5": 0.7037037037037037,
+      "latency_ms": {
+        "1": {
+          "fp32": {
+            "median_ms": 44.35815000033472,
+            "p95_ms": 48.06133498786948
+          },
+          "int8": {
+            "median_ms": 28.964100012672134,
+            "p95_ms": 35.95098500372841
+          }
+        },
+        "2": {
+          "fp32": {
+            "median_ms": 28.485700007877313,
+            "p95_ms": 41.570014992612414
+          },
+          "int8": {
+            "median_ms": 18.296700014616363,
+            "p95_ms": 22.739189997082573
+          }
+        },
+        "4": {
+          "fp32": {
+            "median_ms": 26.17925000959076,
+            "p95_ms": 36.78497998189414
+          },
+          "int8": {
+            "median_ms": 17.43154998985119,
+            "p95_ms": 25.675780011806626
+          }
+        }
+      },
+      "speedup_median": {
+        "1": 1.531487254253628,
+        "2": 1.5568763758011797,
+        "4": 1.50183145072197
+      },
+      "adopt": false,
+      "verdict": "do NOT adopt: 2 decision flip(s) at the deployed threshold; max probability drift 0.853 (limit 0.01)"
+    }
+  }
+}

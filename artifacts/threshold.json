@@ -1,6 +1,0 @@
-{
-  "threshold": 0.7760080151863646,
-  "target_recall": 0.95,
-  "selected_on": "validation",
-  "run": "20261007-004422_resnet18_none_224"
-}

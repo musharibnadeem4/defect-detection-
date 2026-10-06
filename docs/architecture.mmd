@@ -1,0 +1,40 @@
+flowchart LR
+  subgraph OFF["OFFLINE: build the model unit"]
+    direction TB
+    A["Raw images<br/>data/raw/CLASS/*.jpg|png"] --> B["Dedup + manifest<br/>pHash candidates + pixel-RMSE check<br/>duplicate_group_id"]
+    B --> C["Group-aware split<br/>70/15/15 + 5-fold CV<br/>StratifiedGroupKFold"]
+    C --> D["Train<br/>ResNet-18 transfer learning<br/>2 stages, AdamW, early stop on val PR-AUC"]
+    D --> E["Evaluate + error analysis<br/>val: pick threshold (0.776)<br/>test: exact CIs, OOF, Grad-CAM, robustness"]
+    E --> F["Export<br/>model.onnx + model_meta.json<br/>sha256, threshold, norm stats, quality ranges"]
+  end
+
+  OFF ==>|"one versioned unit: model.onnx + model_meta.json<br/>(sha256 verified at startup)"| ON
+
+  subgraph ON["ONLINE: FastAPI + ONNX Runtime (CPU, no torch)"]
+    direction TB
+    LOAD["Startup: verify sha256,<br/>load session, warm-up, /ready"]
+    CL(["Client"]) -->|"POST /predict (multipart)"| V["Validation<br/>content type, size, decode,<br/>min side, max pixels<br/>-> 400 / 413 / 415 / 422"]
+    V --> P["Preprocess (PIL + numpy)<br/>bilinear resize, grayscale to 3 ch,<br/>normalise: identical to training"]
+    P --> I["ONNX Runtime<br/>logits"]
+    LOAD -.-> I
+    I --> T["Softmax + threshold<br/>defect_probability >= 0.776"]
+    P --> Q["Input-quality check<br/>brightness, sharpness vs training range<br/>(informational only)"]
+    T --> R["JSON response<br/>class, confidence, defect_probability,<br/>threshold, model_version, input_quality"]
+    Q --> R
+    T --> LOG["Structured JSON logs<br/>request_id, status, latency,<br/>class, probability (never image bytes)"]
+    R --> OUT(["Client receives the JSON"])
+    V -. "error" .-> ERR["Uniform error body<br/>code, message, request_id"]
+  end
+
+  subgraph FUT["FUTURE WORK (not implemented)"]
+    direction TB
+    MON["Monitoring<br/>score + image-stat drift,<br/>inspector overrides"]
+    RET["Review labels, retrain,<br/>re-validate threshold"]
+    MON -.-> RET
+  end
+
+  ON -.->|"logs, scores"| FUT
+  FUT -.->|"new data, retrained model,<br/>re-validated threshold"| OFF
+
+  classDef future stroke-dasharray: 5 5,fill:#f6f6f6,stroke:#888;
+  class MON,RET future;

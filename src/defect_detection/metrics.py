@@ -65,22 +65,6 @@ def select_threshold(y: np.ndarray, p: np.ndarray, target_recall: float) -> floa
     return float(mid) if m["recall"] >= target_recall and m["precision"] >= best - 1e-12 else hi
 
 
-def bootstrap_ci(y: np.ndarray, p: np.ndarray, thr: float, n: int, seed: int,
-                 alpha: float = 0.05) -> dict:
-    """Percentile bootstrap CIs for precision/recall/F1 of the positive class
-    (rows resampled with replacement)."""
-    rng = np.random.default_rng(seed)
-    y, p = np.asarray(y), np.asarray(p)
-    vals = {"precision": [], "recall": [], "f1": []}
-    for _ in range(n):
-        idx = rng.integers(0, len(y), len(y))
-        m = threshold_metrics(y[idx], p[idx], thr)
-        for k in vals:
-            vals[k].append(m[k])
-    return {k: [float(np.quantile(v, alpha / 2)), float(np.quantile(v, 1 - alpha / 2))]
-            for k, v in vals.items()}
-
-
 def selection_key(run: dict) -> tuple:
     """Higher is better, for a run's metrics dict. Validation PR-AUC first, then recall@0.5, then
     precision at the tuned (recall-targeted) threshold, then lower validation log-loss at the

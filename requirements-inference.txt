@@ -1,0 +1,9 @@
+# Inference service only (Python 3.11). No torch, no scikit-learn: keep the container small.
+fastapi==0.115.6
+uvicorn==0.32.1
+onnxruntime==1.20.1
+pillow==10.4.0
+numpy==2.0.2
+opencv-python-headless==4.10.0.84
+pydantic-settings==2.7.0
+python-multipart==0.0.20      # required by FastAPI for multipart/file uploads

@@ -9,7 +9,6 @@ import argparse
 import ast
 
 import numpy as np
-import pandas as pd
 
 from _common import ROOT, cluster_duplicates, group_summary, hamming_matrix, load_config, standin_scan
 
@@ -23,7 +22,7 @@ def main() -> None:
     df, thumbs = standin_scan(cfg, refresh=args.refresh)
     mh, mr = cfg["duplicates"]["max_hamming"], cfg["duplicates"]["max_rmse"]
 
-    print(f"\n=== STRUCTURE: {src}")
+    print(f"\n=== STRUCTURE: {src.relative_to(ROOT).as_posix()}")
     for folder, proj in cfg["standin"]["class_map"].items():
         files = [p for p in (src / folder).rglob("*") if p.is_file()]
         sub = [p for p in (src / folder).iterdir() if p.is_dir()]

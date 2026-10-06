@@ -27,7 +27,7 @@ from defect_detection.data import load_splits, make_loader  # noqa: E402
 from defect_detection.metrics import (bootstrap_scalar_ci, proportion_report, ranking_metrics,  # noqa: E402
                                       threshold_metrics)
 from defect_detection.model import build_model  # noqa: E402
-from defect_detection.utils import ROOT, configure_threads, load_config, resolve, save_json  # noqa: E402
+from defect_detection.utils import configure_threads, load_config, resolve, save_json  # noqa: E402
 
 COL = {0: "#4C78A8", 1: "#E45756"}
 
@@ -260,7 +260,7 @@ def main() -> None:
     fig, axes = plt.subplots(2, 3, figsize=(12, 7))
     for ax, f in zip(axes.ravel(), fcols):
         n = D[D.label == 0]
-        sc = ax.scatter(n[f], n["z"], c=n["fold"], cmap="tab10", s=10, vmin=0, vmax=9)
+        ax.scatter(n[f], n["z"], c=n["fold"], cmap="tab10", s=10, vmin=0, vmax=9)
         ax.axhline(0, color="k", ls="--", lw=.7)
         ax.set_xlabel(f)
         ax.set_ylabel("z (normals)")
@@ -271,7 +271,7 @@ def main() -> None:
 
     # ================= 4. thresholds & calibration (OOF only)
     y, p = oof.label.to_numpy(), oof.prob.to_numpy()
-    prec, rec, tpr_thr = precision_recall_curve(y, p)
+    prec, rec, _ = precision_recall_curve(y, p)
     fpr, tpr, _ = roc_curve(y, p)
     ts = np.unique(np.r_[0, np.sort(p), 1])
     pr_t = [threshold_metrics(y, p, t) for t in ts]
@@ -303,7 +303,7 @@ def main() -> None:
     plt.close(fig)
 
     # reliability + Brier
-    rel, ece = ea.reliability(y, p)
+    _, ece = ea.reliability(y, p)
     cal = {"pooled": {"brier": ea.brier(y, p), "ece": ece}}
     fig, axes = plt.subplots(1, len(folds) + 1, figsize=(3.2 * (len(folds) + 1), 3.4), sharey=True)
     for ax, (nm, g) in zip(axes, [("pooled", oof)] + [(f"fold {k}", oof[oof.fold == k]) for k in folds]):

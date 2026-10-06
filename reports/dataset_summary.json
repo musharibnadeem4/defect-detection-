@@ -1,0 +1,67 @@
+{
+  "subsample": {
+    "n_images": 700,
+    "class_counts": {
+      "normal": 574,
+      "defective": 126
+    },
+    "defective_pct": 18.0,
+    "seed": 42,
+    "image_size_px": [
+      "300x300"
+    ]
+  },
+  "duplicates_in_subsample": {
+    "images_belonging_to_a_source_duplicate_group": 11,
+    "groups_with_two_or_more_members_inside_subsample": 0,
+    "label_conflict_images": 0
+  },
+  "splits": {
+    "train": {
+      "normal": 402,
+      "defective": 88,
+      "total": 490,
+      "defective_pct": 18.0
+    },
+    "val": {
+      "normal": 86,
+      "defective": 19,
+      "total": 105,
+      "defective_pct": 18.1
+    },
+    "test": {
+      "normal": 86,
+      "defective": 19,
+      "total": 105,
+      "defective_pct": 18.1
+    }
+  },
+  "split_fractions": {
+    "train": 0.7,
+    "val": 0.15,
+    "test": 0.15
+  },
+  "groups_straddling_splits": 0,
+  "cv_folds_train_plus_val": {
+    "0": {
+      "normal": 98,
+      "defective": 21
+    },
+    "1": {
+      "normal": 98,
+      "defective": 21
+    },
+    "2": {
+      "normal": 98,
+      "defective": 21
+    },
+    "3": {
+      "normal": 96,
+      "defective": 23
+    },
+    "4": {
+      "normal": 98,
+      "defective": 21
+    }
+  }
+}

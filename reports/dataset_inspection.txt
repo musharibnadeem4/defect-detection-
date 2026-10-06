@@ -1,0 +1,60 @@
+
+=== STRUCTURE: data/external/casting/casting_data
+  ok_front   -> normal      3000 files, 0 sub-folders
+  def_front  -> defective   3000 files, 0 sub-folders
+  (flat class folders, no train/test split provided)
+
+=== COUNTS PER CLASS
+  normal      3000  (50.0%)
+  defective   3000  (50.0%)
+  imbalance in source data: 1.00:1
+
+=== CORRUPT / UNREADABLE
+  0 corrupt
+
+=== FORMATS / MODES
+label      format  mode
+defective  JPEG    RGB     3000
+normal     JPEG    RGB     3000
+  file extensions: {'.jpeg': 6000}
+
+=== RESOLUTION (w x h)
+  width: min=300 median=300 max=300
+  height: min=300 median=300 max=300
+  distinct resolutions: 1
+res
+300x300    6000
+  resolution by class: {'defective': {'300x300': 3000}, 'normal': {'300x300': 3000}}
+  file size KB: min=8.1 median=9.9 max=12.2
+
+=== CHANNELS
+  grayscale stored as RGB (channels identical, +-2/255): 6000 / 6000 (100.0%)
+  by class: {'defective': 1.0, 'normal': 1.0}
+
+=== DUPLICATES (pHash 8x8 candidates: Hamming <= 8; confirmed if thumbnail RMSE <= 3.0)
+  exact (identical bytes, md5): 0 groups, 0 images
+  near-dup clusters: 51 groups, 103 images (1.7% of dataset)
+  group size: min=2 median=2 max=3
+  redundant images (all but one per group): 52
+  LABEL CONFLICTS (group mixes classes): 0 groups, 0 images
+  largest groups:
+                    size  n_classes classes  exact  label_conflict
+duplicate_group_id                                                
+15                     3          1  normal  False           False
+1                      2          1  normal  False           False
+0                      2          1  normal  False           False
+2                      2          1  normal  False           False
+3                      2          1  normal  False           False
+
+=== pHash ALONE IS NOT DISCRIMINATIVE ON THIS DATA (nearest-neighbour Hamming distance)
+  d<=0: 604, d<=2: 2317, d<=4: 4166, d<=6: 5300, d<=8: 5799, d<=10: 5967   median=4
+  sweep (pHash threshold x RMSE confirmation):
+    hamming<=4 rmse<=-:  480 groups,  4166 images, max size  2280, 30 conflicting
+    hamming<=8 rmse<=-:   31 groups,  5799 images, max size  5712, 2 conflicting
+    hamming<=8 rmse<=1.0:    5 groups,    10 images, max size     2, 0 conflicting
+    hamming<=8 rmse<=2.0:   19 groups,    38 images, max size     2, 0 conflicting
+    hamming<=8 rmse<=3.0:   51 groups,   103 images, max size     3, 0 conflicting
+    hamming<=8 rmse<=5.0:  183 groups,   392 images, max size     4, 2 conflicting
+
+=== PIXEL STATS (RGB, 0-1)
+  mean=[0.5671, 0.5671, 0.5671]  std=[0.2391, 0.2391, 0.2391]

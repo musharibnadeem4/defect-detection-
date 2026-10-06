@@ -15,6 +15,8 @@ paths:
   figures_dir: reports/figures
   models_dir: models
   splits: data/processed/splits.csv
+  model_onnx: artifacts/model.onnx
+  model_meta: artifacts/model_meta.json
   artifacts_dir: artifacts
   runs_dir: runs
   reports_dir: reports
@@ -111,3 +113,13 @@ robustness:                           # applied to the held-out TEST images, rea
   rotation_deg: [90, 180]
   jpeg_quality: [30]
   seed: 0
+
+# ---------------------------------------------------------------- Step 4
+export:
+  opset: 17                 # ONNX opset, pinned
+  input_name: input
+  output_name: logits
+  parity_atol: 1.0e-3       # max |logit_torch - logit_onnx| tolerated by the parity check
+  quality_percentiles: [1, 99]     # training-set range used by the API input-quality check
+  quality_reference_size: null     # null = native resolution of the training images (measured at export)
+  int8_onnx: artifacts/model_int8.onnx   # optional dynamic-quantisation experiment (not deployed)

@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "model_version": "20261007-004422_resnet18_none_224-0f824ffa",
+  "model_name": "resnet18",
+  "training_run_id": "20261007-004422_resnet18_none_224",
+  "git": {
+    "commit": "a2a8418278c8ef09dcb8a48fe1f0dacfefdc52c8",
+    "dirty": true
+  },
+  "export_date_utc": "2026-10-06T22:37:57+00:00",
+  "onnx": {
+    "file": "model.onnx",
+    "sha256": "0f824ffaadd224ebacbe6287e951fc983adc1681265dd7205087b0abca54706f",
+    "size_bytes": 44700657,
+    "opset": 17,
+    "input_name": "input",
+    "output_name": "logits",
+    "dynamic_batch": true
+  },
+  "input": {
+    "size": 224,
+    "channels": 3,
+    "layout": "NCHW",
+    "dtype": "float32"
+  },
+  "classes": [
+    "normal",
+    "defective"
+  ],
+  "positive_class": "defective",
+  "threshold": {
+    "value": 0.7760080151863646,
+    "target_recall": 0.95,
+    "selected_on": "validation",
+    "rule": "p(positive) >= value"
+  },
+  "normalization": {
+    "mean": [
+      0.5796632109732412,
+      0.5796632109732412,
+      0.5796632109732412
+    ],
+    "std": [
+      0.24381503146731165,
+      0.24381503146731165,
+      0.24381503146731165
+    ],
+    "n_images": 490,
+    "computed_on": "train split"
+  },
+  "preprocessing": {
+    "resize": "PIL.Image.resize((s, s), BILINEAR) (antialiased; NOT cv2.INTER_LINEAR)",
+    "channels": "convert('RGB') (gray -> 3 identical channels)",
+    "scale": "x/255 then (x-mean)/std in float32"
+  },
+  "quality_ranges": {
+    "reference_size": 300,
+    "percentiles": [
+      1,
+      99
+    ],
+    "n_images": 490,
+    "computed_on": "train split",
+    "brightness": {
+      "low": 129.52440689086913,
+      "high": 158.30101501464844,
+      "min": 123.8406982421875,
+      "max": 159.2738494873047,
+      "median": 151.13861083984375
+    },
+    "sharpness": {
+      "low": 71.01061195373535,
+      "high": 354.0844232177737,
+      "min": 70.43943786621094,
+      "max": 573.1350708007812,
+      "median": 170.89706420898438
+    }
+  },
+  "versions": {
+    "python": "3.12.0",
+    "torch": "2.6.0+cpu",
+    "onnx": "1.17.0",
+    "onnxruntime": "1.20.1",
+    "numpy": "2.0.2"
+  }
+}

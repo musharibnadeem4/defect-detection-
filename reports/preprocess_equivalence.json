@@ -1,0 +1,62 @@
+{
+  "n_images": 105,
+  "threshold": 0.7760080151863646,
+  "variants": {
+    "shipped: PIL BILINEAR (== torchvision)": {
+      "max_abs_tensor_diff": 0.0,
+      "mean_abs_tensor_diff": 0.0,
+      "max_abs_logit_diff": 0.0,
+      "max_abs_prob_diff": 0.0,
+      "decision_flips_at_threshold": 0,
+      "decision_flips_at_0.5": 0
+    },
+    "cv2.resize INTER_LINEAR (no antialias)": {
+      "max_abs_tensor_diff": 0.45035743713378906,
+      "mean_abs_tensor_diff": 0.007874085567891598,
+      "max_abs_logit_diff": 0.9869697093963623,
+      "max_abs_prob_diff": 0.19057898223400116,
+      "decision_flips_at_threshold": 0,
+      "decision_flips_at_0.5": 0
+    },
+    "cv2.resize INTER_AREA": {
+      "max_abs_tensor_diff": 0.22517871856689453,
+      "mean_abs_tensor_diff": 0.004680021665990353,
+      "max_abs_logit_diff": 0.669863224029541,
+      "max_abs_prob_diff": 0.1305670291185379,
+      "decision_flips_at_threshold": 0,
+      "decision_flips_at_0.5": 0
+    },
+    "cv2.resize INTER_CUBIC": {
+      "max_abs_tensor_diff": 0.5790311098098755,
+      "mean_abs_tensor_diff": 0.014489133842289448,
+      "max_abs_logit_diff": 1.8291044235229492,
+      "max_abs_prob_diff": 0.427586629986763,
+      "decision_flips_at_threshold": 0,
+      "decision_flips_at_0.5": 1
+    },
+    "PIL BICUBIC": {
+      "max_abs_tensor_diff": 0.30559980869293213,
+      "mean_abs_tensor_diff": 0.00917693879455328,
+      "max_abs_logit_diff": 0.712134838104248,
+      "max_abs_prob_diff": 0.1800079196691513,
+      "decision_flips_at_threshold": 0,
+      "decision_flips_at_0.5": 0
+    },
+    "PIL NEAREST": {
+      "max_abs_tensor_diff": 1.4314932823181152,
+      "mean_abs_tensor_diff": 0.02807540073990822,
+      "max_abs_logit_diff": 6.878777027130127,
+      "max_abs_prob_diff": 0.983830826357007,
+      "decision_flips_at_threshold": 40,
+      "decision_flips_at_0.5": 55
+    },
+    "cv2.imdecode + PIL BILINEAR": {
+      "max_abs_tensor_diff": 0.0,
+      "mean_abs_tensor_diff": 0.0,
+      "max_abs_logit_diff": 0.0,
+      "max_abs_prob_diff": 0.0,
+      "decision_flips_at_threshold": 0,
+      "decision_flips_at_0.5": 0
+    }
+  }
+}

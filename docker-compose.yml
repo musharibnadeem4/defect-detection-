@@ -1,0 +1,16 @@
+# docker compose up --build        (then: curl http://localhost:8000/ready)
+services:
+  defect-api:
+    build: .
+    image: defect-detection-api:latest
+    ports:
+      - "${PORT:-8000}:8000"
+    environment:                      # every DEFECT_* setting is documented in the README
+      DEFECT_MAX_UPLOAD_BYTES: "5242880"
+      DEFECT_MIN_IMAGE_SIDE: "64"
+      DEFECT_MAX_IMAGE_PIXELS: "25000000"
+      DEFECT_BATCH_MAX_IMAGES: "8"
+      DEFECT_ORT_INTRA_OP_THREADS: "2"
+      DEFECT_ORT_INTER_OP_THREADS: "1"
+      DEFECT_LOG_LEVEL: "INFO"
+    restart: unless-stopped

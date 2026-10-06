@@ -1,0 +1,23 @@
+{
+ "train": {
+  "n": 490,
+  "flagged": 19,
+  "pct": 3.9,
+  "defective_flagged": "2/88",
+  "normal_flagged": "17/402"
+ },
+ "val": {
+  "n": 105,
+  "flagged": 5,
+  "pct": 4.8,
+  "defective_flagged": "1/19",
+  "normal_flagged": "4/86"
+ },
+ "test": {
+  "n": 105,
+  "flagged": 8,
+  "pct": 7.6,
+  "defective_flagged": "2/19",
+  "normal_flagged": "6/86"
+ }
+}

@@ -2,7 +2,7 @@
 import numpy as np
 import pytest
 
-from defect_detection.metrics import (bootstrap_ci, ranking_metrics, select_threshold, selection_key,
+from defect_detection.metrics import (ranking_metrics, select_threshold, selection_key,
                                       threshold_metrics)
 
 
@@ -56,17 +56,6 @@ def test_ranking_metrics_perfect_and_degenerate():
     y = np.array([0, 0, 1, 1])
     assert ranking_metrics(y, np.array([.1, .2, .8, .9])) == {"pr_auc": 1.0, "roc_auc": 1.0}
     assert np.isnan(ranking_metrics(np.zeros(4), np.random.rand(4))["pr_auc"])
-
-
-def test_bootstrap_ci_deterministic_and_brackets_point_estimate():
-    rng = np.random.default_rng(1)
-    y = (rng.random(300) < .2).astype(int)
-    p = np.clip(y * .6 + rng.normal(.2, .15, 300), 0, 1)
-    a, b = bootstrap_ci(y, p, .5, 200, seed=3), bootstrap_ci(y, p, .5, 200, seed=3)
-    assert a == b
-    pt = threshold_metrics(y, p, .5)
-    for k in ("precision", "recall", "f1"):
-        assert a[k][0] <= pt[k] <= a[k][1] and a[k][0] < a[k][1]
 
 
 def test_selection_key_prefers_pr_auc_then_recall_then_precision_then_val_loss():

@@ -1,0 +1,114 @@
+[
+  {
+    "file": "01_defect_correct_cast_def_0_7896.jpeg",
+    "role": "correct defect (random)",
+    "true_label": "defective",
+    "split": "test",
+    "source_filename": "cast_def_0_7896.jpeg"
+  },
+  {
+    "file": "02_defect_correct_cast_def_0_5311.jpeg",
+    "role": "correct defect (random)",
+    "true_label": "defective",
+    "split": "test",
+    "source_filename": "cast_def_0_5311.jpeg"
+  },
+  {
+    "file": "03_defect_correct_cast_def_0_3650.jpeg",
+    "role": "correct defect (random)",
+    "true_label": "defective",
+    "split": "test",
+    "source_filename": "cast_def_0_3650.jpeg"
+  },
+  {
+    "file": "04_defect_correct_cast_def_0_9119.jpeg",
+    "role": "correct defect (hardest in test: lowest score)",
+    "true_label": "defective",
+    "split": "test",
+    "source_filename": "cast_def_0_9119.jpeg"
+  },
+  {
+    "file": "05_normal_correct_cast_ok_0_3479.jpeg",
+    "role": "correct normal (random)",
+    "true_label": "normal",
+    "split": "test",
+    "source_filename": "cast_ok_0_3479.jpeg"
+  },
+  {
+    "file": "06_normal_correct_cast_ok_0_239.jpeg",
+    "role": "correct normal (random)",
+    "true_label": "normal",
+    "split": "test",
+    "source_filename": "cast_ok_0_239.jpeg"
+  },
+  {
+    "file": "07_normal_correct_cast_ok_0_198.jpeg",
+    "role": "correct normal (random)",
+    "true_label": "normal",
+    "split": "test",
+    "source_filename": "cast_ok_0_198.jpeg"
+  },
+  {
+    "file": "08_normal_correct_cast_ok_0_7299.jpeg",
+    "role": "correct normal (hardest in test: highest score)",
+    "true_label": "normal",
+    "split": "test",
+    "source_filename": "cast_ok_0_7299.jpeg"
+  },
+  {
+    "file": "09_oof_false_negative_cast_def_0_6988.jpeg",
+    "role": "OOF false negative (Step 3)",
+    "true_label": "defective",
+    "split": "train",
+    "source_filename": "cast_def_0_6988.jpeg"
+  },
+  {
+    "file": "10_oof_false_negative_cast_def_0_2949.jpeg",
+    "role": "OOF false negative (Step 3)",
+    "true_label": "defective",
+    "split": "train",
+    "source_filename": "cast_def_0_2949.jpeg"
+  },
+  {
+    "file": "11_oof_false_positive_cast_ok_0_4994.jpeg",
+    "role": "OOF false positive (Step 3)",
+    "true_label": "normal",
+    "split": "train",
+    "source_filename": "cast_ok_0_4994.jpeg"
+  },
+  {
+    "file": "12_oof_false_positive_cast_ok_0_7597.jpeg",
+    "role": "OOF false positive (Step 3)",
+    "true_label": "normal",
+    "split": "train",
+    "source_filename": "cast_ok_0_7597.jpeg"
+  },
+  {
+    "file": "13_oof_false_positive_cast_ok_0_5314.jpeg",
+    "role": "OOF false positive (Step 3)",
+    "true_label": "normal",
+    "split": "train",
+    "source_filename": "cast_ok_0_5314.jpeg"
+  },
+  {
+    "file": "14_perturbed_blur_sigma2_cast_def_0_7896.png",
+    "role": "perturbed (blur_sigma2) copy of cast_def_0_7896.jpeg",
+    "true_label": "defective",
+    "split": "test",
+    "source_filename": "cast_def_0_7896.jpeg"
+  },
+  {
+    "file": "15_perturbed_noise_sigma25_cast_def_0_7896.png",
+    "role": "perturbed (noise_sigma25) copy of cast_def_0_7896.jpeg",
+    "true_label": "defective",
+    "split": "test",
+    "source_filename": "cast_def_0_7896.jpeg"
+  },
+  {
+    "file": "16_perturbed_brightness_x1.3_cast_def_0_7896.png",
+    "role": "perturbed (brightness_x1.3) copy of cast_def_0_7896.jpeg",
+    "true_label": "defective",
+    "split": "test",
+    "source_filename": "cast_def_0_7896.jpeg"
+  }
+]

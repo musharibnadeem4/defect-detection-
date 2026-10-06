@@ -25,3 +25,11 @@ Thumbs.db
 runs/
 *.log
 *.joblib
+
+# Artifacts: only the deployable unit is versioned (model.onnx + model_meta.json, which belong together).
+# best.pt, norm_stats.json, threshold.json, model_config.json and the INT8 experiments are regenerated
+# by `python tasks.py all` (training) and are not needed to serve the model.
+artifacts/*
+!artifacts/model.onnx
+!artifacts/model_meta.json
+.venv*/

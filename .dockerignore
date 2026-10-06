@@ -1,0 +1,19 @@
+.git
+.gitignore
+.pytest_cache
+__pycache__
+*.pyc
+*.log
+data
+runs
+reports
+notebooks
+tests
+scripts
+examples
+configs
+docs
+README.md
+# only model.onnx + model_meta.json from artifacts/ are copied by the Dockerfile; keep the rest out of the context
+artifacts/*.pt
+artifacts/model_int8.onnx
