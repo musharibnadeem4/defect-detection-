@@ -20,10 +20,11 @@ import numpy as np
 import pandas as pd
 import torch
 from PIL import Image
-from sklearn.metrics import classification_report
+from sklearn.metrics import average_precision_score, classification_report, f1_score, roc_auc_score
 
 from .data import load_splits, make_loader
-from .metrics import bootstrap_ci, ranking_metrics, selection_key, threshold_metrics
+from .metrics import (bootstrap_scalar_ci, proportion_report, ranking_metrics, selection_key,
+                      threshold_metrics)
 from .model import build_model, image_to_vector
 from .train import _datasets, _val_report, collect_runs, cross_validate, predict_proba
 from .utils import configure_threads, get_device, load_json, positive_index, resolve, save_json
@@ -115,9 +116,16 @@ def evaluate_run(cfg: dict, m: dict, device) -> dict:
     y, p, thr, ev = pred["label"].to_numpy(), pred["prob"].to_numpy(), m["val"]["threshold"], cfg["evaluation"]
     seed = cfg["project"]["seed"]
     out = {**ranking_metrics(y, p), "threshold": thr, "n_test": len(y), "n_pos": int((y == 1).sum())}
+    alpha = cfg.get("error_analysis", {}).get("ci_alpha", 0.05)
+    n_b = ev["bootstrap_resamples"]
     for key, t in (("at_0.5", 0.5), ("at_tuned", thr)):
-        out[key] = {**threshold_metrics(y, p, t),
-                    "ci95": bootstrap_ci(y, p, t, ev["bootstrap_resamples"], seed)}
+        m_ = threshold_metrics(y, p, t)
+        rep = proportion_report(m_, alpha)  # exact Clopper-Pearson for recall and precision
+        out[key] = {**m_, "recall_ci": list(rep["recall_ci"]), "precision_ci": list(rep["precision_ci"]),
+                    "f1_bootstrap": bootstrap_scalar_ci(y, p, lambda a, b, t=t: f1_score(a, b >= t, zero_division=0),
+                                                        n_b, seed)}
+    out["pr_auc_bootstrap"] = bootstrap_scalar_ci(y, p, average_precision_score, n_b, seed)
+    out["roc_auc_bootstrap"] = bootstrap_scalar_ci(y, p, roc_auc_score, n_b, seed)
     out["latency"] = measure_latency(cfg, m, device)
     save_json(out, rd / "test_metrics.json")
     return out
@@ -230,14 +238,20 @@ def write_comparison(cfg: dict, rows: list[tuple[dict, dict]], chosen: dict, cv:
                  f"{_f(a['precision'])} | {_f(a['f1'])} | {_f(b['recall'])} | {_f(b['precision'])} | {_f(b['f1'])} | "
                  f"{lat['median_ms']:.1f} / {lat['p95_ms']:.1f} |")
     ct = next(t for m, t in rows if m["exp_name"] == chosen["exp_name"])
-    L += ["", f"## Chosen model: `{chosen['exp_name']}` — bootstrap 95% CIs on test "
-          f"({cfg['evaluation']['bootstrap_resamples']} resamples, {ct['n_pos']} defective of {ct['n_test']})", "",
-          "| threshold | recall | precision | F1 |", "|---|---|---|---|"]
+    L += ["", f"## Chosen model: `{chosen['exp_name']}`: 95% intervals on test ({ct['n_pos']} defective of {ct['n_test']})", "",
+          "Recall and precision: exact Clopper-Pearson. F1 and AUCs: percentile bootstrap "
+          f"({cfg['evaluation']['bootstrap_resamples']} resamples); a bootstrap interval of zero width is marked "
+          "*degenerate* (every resample scored perfectly), so it carries no information about uncertainty.", "",
+          "| threshold | recall | precision | F1 (bootstrap) |", "|---|---|---|---|"]
+    fmt = lambda c: f"[{_f(c[0], 2)}, {_f(c[1], 2)}]"  # noqa: E731
     for key, name in (("at_0.5", "0.5"), ("at_tuned", f"tuned ({ct['threshold']:.4f})")):
-        c, d = ct[key]["ci95"], ct[key]
-        L.append(f"| {name} | {_f(d['recall'])} [{_f(c['recall'][0], 2)}, {_f(c['recall'][1], 2)}] | "
-                 f"{_f(d['precision'])} [{_f(c['precision'][0], 2)}, {_f(c['precision'][1], 2)}] | "
-                 f"{_f(d['f1'])} [{_f(c['f1'][0], 2)}, {_f(c['f1'][1], 2)}] |")
+        d, fb = ct[key], ct[key]["f1_bootstrap"]
+        L.append(f"| {name} | {_f(d['recall'])} {fmt(d['recall_ci'])} | {_f(d['precision'])} {fmt(d['precision_ci'])} | "
+                 f"{_f(d['f1'])} {fmt(fb['ci'])}{' *degenerate*' if fb['degenerate'] else ''} |")
+    pa, ra = ct["pr_auc_bootstrap"], ct["roc_auc_bootstrap"]
+    L.append("")
+    L.append(f"PR-AUC {_f(ct['pr_auc'])} {fmt(pa['ci'])}{' *degenerate*' if pa['degenerate'] else ''}; "
+             f"ROC-AUC {_f(ct['roc_auc'])} {fmt(ra['ci'])}{' *degenerate*' if ra['degenerate'] else ''}.")
     if cv:
         L += ["", f"## 5-fold CV of the chosen configuration (train+val only, {cv['epochs']} epochs/fold = the chosen run's best epoch, same LR schedule, no early stopping)", "",
               f"- OOF PR-AUC {_f(cv['pr_auc'])}, ROC-AUC {_f(cv['roc_auc'])} on {cv['n_oof']} images; "
@@ -277,7 +291,8 @@ def evaluate_all(cfg: dict, run_cv_flag: bool = True) -> dict:
         f"Model: {chosen['exp_name']} (stand-in dataset)\n\n" + classification_text(cfg, cpred, chosen["val"]["threshold"]),
         encoding="utf-8")
     promote(cfg, chosen)
-    cv = run_cv(cfg, chosen) if run_cv_flag else None
+    cv_path = reports / "cv_summary.json"
+    cv = run_cv(cfg, chosen) if run_cv_flag else (load_json(cv_path) if cv_path.exists() else None)
     probe = leakage_probe(cfg)
     save_json({"chosen": chosen["exp_name"], "leakage_probe": probe}, reports / "evaluation_summary.json")
     text = write_comparison(cfg, rows, chosen, cv, probe)

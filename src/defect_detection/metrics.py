@@ -92,3 +92,37 @@ def selection_key(run: dict) -> tuple:
     vloss = hist[best - 1].get("val_loss", 0.0) if hist and best else 0.0
     return (round(val["pr_auc"], 3), round(val["at_0.5"]["recall"], 4),
             round(val["at_tuned"]["precision"], 4), -round(vloss, 4))
+
+
+def clopper_pearson(k: int, n: int, alpha: float = 0.05) -> tuple[float, float]:
+    """Exact (Clopper-Pearson) two-sided 1-alpha interval for a binomial proportion k/n.
+    Used for recall (k=TP, n=TP+FN) and precision (k=TP, n=TP+FP). n=0 -> (nan, nan)."""
+    from scipy.stats import beta
+    if n <= 0:
+        return (float("nan"), float("nan"))
+    lo = 0.0 if k == 0 else float(beta.ppf(alpha / 2, k, n - k + 1))
+    hi = 1.0 if k == n else float(beta.ppf(1 - alpha / 2, k + 1, n - k))
+    return lo, hi
+
+
+def proportion_report(m: dict, alpha: float = 0.05) -> dict:
+    """Recall/precision of the positive class with exact intervals, from threshold_metrics output."""
+    return {"recall": m["recall"], "recall_ci": clopper_pearson(m["tp"], m["tp"] + m["fn"], alpha),
+            "precision": m["precision"], "precision_ci": clopper_pearson(m["tp"], m["tp"] + m["fp"], alpha),
+            "tp": m["tp"], "fp": m["fp"], "fn": m["fn"], "tn": m["tn"]}
+
+
+def bootstrap_scalar_ci(y: np.ndarray, p: np.ndarray, fn, n: int, seed: int, alpha: float = 0.05) -> dict:
+    """Percentile bootstrap CI for a scalar statistic fn(y, p) (e.g. F1, PR-AUC, ROC-AUC). Resamples
+    with one class missing are skipped. `degenerate` is True when the interval has zero width
+    (e.g. a perfect score on every resample), in which case it says nothing about uncertainty."""
+    rng = np.random.default_rng(seed)
+    y, p = np.asarray(y), np.asarray(p)
+    vals = []
+    for _ in range(n):
+        idx = rng.integers(0, len(y), len(y))
+        if y[idx].min() == y[idx].max():
+            continue
+        vals.append(fn(y[idx], p[idx]))
+    lo, hi = float(np.quantile(vals, alpha / 2)), float(np.quantile(vals, 1 - alpha / 2))
+    return {"ci": [lo, hi], "n_valid": len(vals), "degenerate": bool(hi - lo < 1e-12)}

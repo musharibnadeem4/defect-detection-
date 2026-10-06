@@ -77,3 +77,26 @@ def test_selection_key_prefers_pr_auc_then_recall_then_precision_then_val_loss()
     assert selection_key(run(1, 1, 1, .5)) > selection_key(run(1, .9, 1, 0))
     assert selection_key(run(1, 1, 1, .01)) > selection_key(run(1, 1, 1, .20))   # tie -> lower val loss
     assert selection_key(run(1.0, 1, 1, .1)) == selection_key(run(1.0004, 1, 1, .1))  # <0.001 is noise
+
+
+def test_clopper_pearson_known_values_and_edges():
+    from defect_detection.metrics import clopper_pearson
+    lo, hi = clopper_pearson(5, 10)
+    assert (lo, hi) == pytest.approx((0.18709, 0.81291), abs=1e-4)           # textbook value
+    assert clopper_pearson(19, 19) == pytest.approx((0.82353, 1.0), abs=1e-4)  # perfect score: wide lower bound
+    assert clopper_pearson(0, 10)[0] == 0.0 and clopper_pearson(0, 10)[1] == pytest.approx(0.30850, abs=1e-4)
+    assert np.isnan(clopper_pearson(0, 0)[0])
+    for k in range(0, 21):                                                   # always contains the point estimate
+        lo, hi = clopper_pearson(k, 20)
+        assert lo <= k / 20 <= hi
+
+
+def test_bootstrap_scalar_flags_degenerate_perfect_scores():
+    from defect_detection.metrics import bootstrap_scalar_ci
+    y = np.r_[np.ones(10), np.zeros(40)].astype(int)
+    perfect = np.r_[np.full(10, .99), np.full(40, .01)]
+    r = bootstrap_scalar_ci(y, perfect, lambda a, b: ranking_metrics(a, b)["pr_auc"], 100, seed=0)
+    assert r["degenerate"] and r["ci"] == [1.0, 1.0]
+    noisy = np.clip(perfect + np.random.default_rng(0).normal(0, .6, 50), 0, 1)
+    r2 = bootstrap_scalar_ci(y, noisy, lambda a, b: ranking_metrics(a, b)["roc_auc"], 100, seed=0)
+    assert not r2["degenerate"] and r2["ci"][0] < r2["ci"][1]

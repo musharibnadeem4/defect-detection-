@@ -19,19 +19,23 @@ Models were ranked on **validation** only (PR-AUC, then recall@0.5, then precisi
 
 | run | PR-AUC | ROC-AUC | recall@0.5 | prec@0.5 | F1@0.5 | recall@tuned | prec@tuned | F1@tuned | latency median / p95 (ms) |
 |---|---|---|---|---|---|---|---|---|---|
-| resnet18_none_224 ★ | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 50.9 / 57.2 |
-| resnet18_none_300 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 87.3 / 95.5 |
-| efficientnet_b0_none_224 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 48.6 / 53.3 |
-| resnet18_weighted_loss_224 | 1.000 | 1.000 | 1.000 | 0.950 | 0.974 | 1.000 | 1.000 | 1.000 | 54.1 / 83.5 |
-| resnet18_sampler_224 | 0.997 | 0.999 | 1.000 | 0.655 | 0.792 | 0.947 | 0.947 | 0.947 | 55.1 / 60.2 |
-| logreg_64px | 0.972 | 0.993 | 1.000 | 0.792 | 0.884 | 1.000 | 0.594 | 0.745 | 0.2 / 0.7 |
+| resnet18_none_224 ★ | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 54.1 / 59.9 |
+| resnet18_none_300 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 91.2 / 100.7 |
+| efficientnet_b0_none_224 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 | 50.4 / 56.4 |
+| resnet18_weighted_loss_224 | 1.000 | 1.000 | 1.000 | 0.950 | 0.974 | 1.000 | 1.000 | 1.000 | 53.6 / 61.1 |
+| resnet18_sampler_224 | 0.997 | 0.999 | 1.000 | 0.655 | 0.792 | 0.947 | 0.947 | 0.947 | 56.6 / 91.4 |
+| logreg_64px | 0.972 | 0.993 | 1.000 | 0.792 | 0.884 | 1.000 | 0.594 | 0.745 | 0.2 / 0.4 |
 
-## Chosen model: `resnet18_none_224` — bootstrap 95% CIs on test (1000 resamples, 19 defective of 105)
+## Chosen model: `resnet18_none_224`: 95% intervals on test (19 defective of 105)
 
-| threshold | recall | precision | F1 |
+Recall and precision: exact Clopper-Pearson. F1 and AUCs: percentile bootstrap (1000 resamples); a bootstrap interval of zero width is marked *degenerate* (every resample scored perfectly), so it carries no information about uncertainty.
+
+| threshold | recall | precision | F1 (bootstrap) |
 |---|---|---|---|
-| 0.5 | 1.000 [1.00, 1.00] | 1.000 [1.00, 1.00] | 1.000 [1.00, 1.00] |
-| tuned (0.7760) | 1.000 [1.00, 1.00] | 1.000 [1.00, 1.00] | 1.000 [1.00, 1.00] |
+| 0.5 | 1.000 [0.82, 1.00] | 1.000 [0.82, 1.00] | 1.000 [1.00, 1.00] *degenerate* |
+| tuned (0.7760) | 1.000 [0.82, 1.00] | 1.000 [0.82, 1.00] | 1.000 [1.00, 1.00] *degenerate* |
+
+PR-AUC 1.000 [1.00, 1.00] *degenerate*; ROC-AUC 1.000 [1.00, 1.00] *degenerate*.
 
 ## 5-fold CV of the chosen configuration (train+val only, 5 epochs/fold = the chosen run's best epoch, same LR schedule, no early stopping)
 

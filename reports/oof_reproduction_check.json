@@ -1,0 +1,7 @@
+{
+  "n": 595,
+  "max_abs_prob_diff": 2.930603026918277e-08,
+  "mean_abs_prob_diff": 2.9433210380977665e-09,
+  "same_fold": true,
+  "n_decisions_flipped_at_0.5": 0
+}

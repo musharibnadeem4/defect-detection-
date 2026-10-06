@@ -241,12 +241,13 @@ def run_baseline(cfg: dict) -> dict:
     return m
 
 
-def cross_validate(cfg: dict, model_name: str, imbalance: str, size: int, best_epoch: int) -> pd.DataFrame:
+def cross_validate(cfg: dict, model_name: str, imbalance: str, size: int, best_epoch: int,
+                   save_dir: Path | None = None) -> pd.DataFrame:
     """K-fold (group-aware, stratified) out-of-fold probabilities over train+val rows.
 
     No early stopping and no checkpoint selection (that would peek at the held-out fold). Each fold
     replays the selected run: same LR schedule, stopped at that run's `best_epoch`, final weights
-    used. Test rows are excluded."""
+    used. Test rows are excluded. With `save_dir`, each fold's weights are saved as fold<k>.pt."""
     t, seed = cfg["training"], cfg["project"]["seed"]
     configure_threads(cfg)
     device, pos = get_device(), positive_index(cfg)
@@ -264,6 +265,10 @@ def cross_validate(cfg: dict, model_name: str, imbalance: str, size: int, best_e
         model, _, _ = fit(model, tl, None, cfg, device, weight, pos,
                           stage1_epochs=min(best_epoch, t["stage1_epochs"]),
                           stop_after_stage2=max(best_epoch - t["stage1_epochs"], 0))
+        if save_dir is not None:
+            Path(save_dir).mkdir(parents=True, exist_ok=True)
+            torch.save({"state_dict": model.state_dict(), "model": model_name, "size": size, "fold": int(k)},
+                       Path(save_dir) / f"fold{int(k)}.pt")
         p, y, _ = predict_proba(model, hl, device, pos)
         out.append(pd.DataFrame({"filename": ho_df["filename"].to_numpy(), "label": y, "prob": p,
                                  "fold": int(k)}))
