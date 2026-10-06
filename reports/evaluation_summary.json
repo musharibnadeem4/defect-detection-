@@ -1,0 +1,11 @@
+{
+  "chosen": "resnet18_none_224",
+  "leakage_probe": {
+    "rmse_threshold": 3.0,
+    "test_to_trainval_min": 4.514300346374512,
+    "test_to_trainval_median": 19.38376808166504,
+    "test_images_with_trainval_near_duplicate": 0,
+    "val_to_train_min": 4.790126800537109,
+    "val_to_train_median": 19.81141471862793
+  }
+}

@@ -1,0 +1,21 @@
+Model: resnet18_none_224 (stand-in dataset)
+
+--- threshold 0.5 ---
+              precision    recall  f1-score   support
+
+      normal      1.000     1.000     1.000        86
+   defective      1.000     1.000     1.000        19
+
+    accuracy                          1.000       105
+   macro avg      1.000     1.000     1.000       105
+weighted avg      1.000     1.000     1.000       105
+
+--- tuned threshold 0.7760 (selected on validation) ---
+              precision    recall  f1-score   support
+
+      normal      1.000     1.000     1.000        86
+   defective      1.000     1.000     1.000        19
+
+    accuracy                          1.000       105
+   macro avg      1.000     1.000     1.000       105
+weighted avg      1.000     1.000     1.000       105

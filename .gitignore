@@ -20,3 +20,8 @@ venv/
 .DS_Store
 Thumbs.db
 .vscode/
+
+# Step 2 outputs
+runs/
+*.log
+*.joblib

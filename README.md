@@ -14,7 +14,7 @@
 configs/config.yaml     class names, image size, paths, hyper-parameters, stand-in settings
 data/{raw,processed,external}   git-ignored; raw/<class_name>/*.jpg|png is the only input contract
 scripts/                inspect_dataset.py, prepare_standin_dataset.py, eda.py (+ _common.py)
-src/defect_detection/   data, transforms, model, train, evaluate, export, utils (stubs until Step 2)
+src/defect_detection/   data, transforms, model, train, metrics, evaluate, utils (export.py: stub until Step 3)
 api/  tests/  notebooks/  reports/figures/
 ```
 
@@ -43,3 +43,34 @@ Put images in `data/raw/<class_name>/`, set `classes` in `configs/config.yaml` (
 class), and skip `prepare_standin_dataset.py` (the `standin:` block is stand-in only). The
 manifest/duplicate groups can be rebuilt by pointing the scan helpers in `scripts/_common.py`
 at the new folders.
+
+## Step 2: splitting, training, evaluation
+```bash
+python scripts/make_splits.py            # data/processed/splits.csv + artifacts/norm_stats.json
+python scripts/train.py --phase all      # baseline, imbalance sweep, extra architectures -> runs/<ts>_<exp>/
+python scripts/evaluate.py               # test metrics, comparison table, 5-fold CV + OOF predictions
+python -m pytest                         # split-leakage, transform, metric and smoke-training tests
+```
+Everything (sizes, strategies, epochs, thresholds, experiment grid) is in `configs/config.yaml`.
+
+**Protocol (what touches which data)**
+- *Split*: 70/15/15, class-stratified and group-aware on `duplicate_group_id` (StratifiedGroupKFold cut
+  into 20 folds, folds handed to splits; the best of `splits.n_tries` seeded passes is kept). `cv_fold`
+  is a second group-aware partition of train+val only; test rows are never part of CV.
+- *Normalisation* mean/std come from the train split only (`artifacts/norm_stats.json`).
+- *Train* data fits weights. *Validation* picks the epoch (early stopping on PR-AUC), the imbalance
+  strategy, the model, and the decision threshold. *Test* is read only by `evaluate.py`, after the
+  model has been chosen from validation metrics.
+- *Model ranking*: validation PR-AUC (rounded to 0.001), then recall@0.5, then precision at the tuned
+  threshold, then lower validation log-loss (the last tie-break matters because PR-AUC saturates at
+  1.0 on a small validation set).
+- *Threshold*: highest precision subject to recall >= `threshold.target_recall` on validation. If many
+  thresholds tie, the logit-space midpoint of the tied plateau is used rather than the edge. With
+  only ~19 validation defects, recall >= 0.95 means catching every one of them (18/19 = 0.947).
+- *CV* replays the chosen run (same LR schedule, stopped at its best epoch, no early stopping, no
+  checkpoint selection on the held-out fold) so out-of-fold predictions are unbiased.
+- *Latency* is the CPU forward pass at batch size 1 (decode/resize excluded), measured by `evaluate.py`.
+
+Training here ran on CPU only (4 cores), which is why epoch budgets are modest
+(2 head epochs + up to 8 fine-tuning epochs, patience 3). Results are in `reports/model_comparison.md`;
+all of them are on the stand-in dataset.

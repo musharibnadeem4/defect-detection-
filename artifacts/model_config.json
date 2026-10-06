@@ -1,0 +1,10 @@
+{
+  "model": "resnet18",
+  "image_size": 224,
+  "classes": [
+    "normal",
+    "defective"
+  ],
+  "imbalance": "none",
+  "run": "20261007-004422_resnet18_none_224"
+}

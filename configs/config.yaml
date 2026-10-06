@@ -14,6 +14,10 @@ paths:
   manifest: data/processed/manifest.csv
   figures_dir: reports/figures
   models_dir: models
+  splits: data/processed/splits.csv
+  artifacts_dir: artifacts
+  runs_dir: runs
+  reports_dir: reports
 
 image:
   extensions: [.jpg, .jpeg, .png]
@@ -36,11 +40,52 @@ standin:
   n_images: 700
   positive_ratio: 0.18    # fraction of defective images in the subsample
 
-# Hyperparameters: placeholders for Step 2.
+# ---------------------------------------------------------------- Step 2
+splits:
+  train: 0.70
+  val: 0.15
+  test: 0.15
+  n_tries: 10             # seeded StratifiedGroupKFold passes scored for balance (~4 s each)
+  cv_folds: 5             # CV over train+val only; the test set is never part of CV
+
+augmentation:             # train only. No hue/saturation jitter, no random crops (edge defects).
+  hflip: true
+  vflip: true
+  rotation_deg: 15
+  brightness: 0.2
+  contrast: 0.2
+
 training:
   batch_size: 32
-  epochs: 20
-  lr: 1.0e-4
+  num_threads: 4          # torch CPU threads (this machine: 4 cores)
+  num_workers: 0          # 0 is fastest for this tiny in-memory dataset on Windows
   weight_decay: 1.0e-4
-  val_fraction: 0.15
-  test_fraction: 0.15
+  stage1_epochs: 2        # head only, backbone frozen
+  stage1_lr: 1.0e-3
+  stage2_epochs: 8        # max; fine-tune everything with early stopping
+  stage2_lr: 1.0e-4
+  patience: 3             # early stopping on val PR-AUC (stage 2 epochs)
+  pretrained: true
+  deterministic: true
+
+baseline:                 # logistic regression on downsampled pixels
+  size: 64
+  C: [0.001, 0.01, 0.1, 1.0]   # picked on validation PR-AUC
+
+threshold:
+  target_recall: 0.95     # recall on the positive class required on VALIDATION
+
+evaluation:
+  bootstrap_resamples: 1000
+  latency_warmup: 10
+  latency_runs: 100
+
+# Run order. imbalance in {none, weighted_loss, sampler}.
+experiments:
+  imbalance_sweep:        # phase 1: same model/size, only the imbalance strategy changes
+    model: resnet18
+    size: 224
+    strategies: [none, weighted_loss, sampler]
+  architectures:          # phase 2: use the phase-1 winner (chosen on validation)
+    - {model: efficientnet_b0, size: 224}
+    - {model: resnet18, size: 300}
