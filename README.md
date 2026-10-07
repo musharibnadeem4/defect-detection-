@@ -186,7 +186,7 @@ Exploratory data analysis is `scripts/eda.py`, with figures in `reports/figures/
 
 ## Use of AI tools
 
-I used Claude (chat for planning, Claude Code for implementation). I ran the pipeline, the tests and the Docker container myself and reviewed the results.
+I used Claude for implementation.
 
 ## Dataset licence note
 
