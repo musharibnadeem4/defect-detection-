@@ -39,7 +39,7 @@ first, then all layers) with early stopping on validation PR-AUC. I did **not** 
 
 ### 6. The test score is perfect. Do you believe it?
 Not as a precise estimate. 19/19 defects found with 0 false alarms, but with 19 defects the exact Clopper-Pearson 95% interval for recall is [0.82, 1.00], and bootstrap intervals for F1 and the AUCs
-collapse to zero width, so I mark them degenerate and do not quote them. Cross-validation on 595 images is more informative: recall 0.981 [0.934, 0.998], precision 0.938 [0.875, 0.975] at the deployed threshold, and it disagrees with the test
+collapse to zero width, so I mark them degenerate and do not quote them. Cross-validation on 595 images is more informative: recall 0.981 [0.934, 0.998], precision 0.938 [0.875, 0.975] at the deployed threshold (the deployed threshold applied to predictions from five differently calibrated fold models, not the deployed model's own precision), and it disagrees with the test
 set on precision at 0.5 (0.761 vs 1.000). On leakage: the test set was read only after the model and threshold were chosen on validation, I ran a nearest-neighbour probe (closest test-to-train/val pixel RMSE is 4.51; none within the duplicate
 distance of 3.0), and the robustness check reads test read-only with nothing re-tuned.
 

@@ -33,3 +33,7 @@ artifacts/*
 !artifacts/model.onnx
 !artifacts/model_meta.json
 .venv*/
+
+# stray manual-test files
+fake.*
+examples/images/fake.*

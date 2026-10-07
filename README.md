@@ -8,9 +8,9 @@
 
 - A binary visual defect detector (ResNet-18 transfer learning, 224 px) served by FastAPI + ONNX Runtime on CPU, with a decision threshold of **0.776** tuned on validation for at least 95% recall.
 - **Every result here comes from a stand-in dataset** (public Kaggle casting images, subsampled to 700 images with 18% defective), because the client dataset was not provided. Nothing below is a claim about the client's data.
-- On the held-out test set (105 images, 19 defective) it finds 19/19 defects with 0 false alarms, but with only 19 defects the exact 95% interval for recall is **[0.82, 1.00]**. Cross-validation on 595 images is the more honest number: recall 0.981 and precision 0.938 at the deployed threshold.
+- On the held-out test set (105 images, 19 defective) it finds 19/19 defects with 0 false alarms, but with only 19 defects the exact 95% interval for recall is **[0.82, 1.00]**. Cross-validation on 595 images is the more honest number: recall 0.981 and precision 0.938 at the deployed threshold (applied to five differently calibrated fold models, not the deployed model's own precision).
 - Main weaknesses found: calibration shifts between training runs, two defects missed with high confidence, and brittleness to noise, blur and brighter images ([error analysis](reports/error_analysis.md)).
-- The Docker image is built and smoke-tested by the [CI workflow](.github/workflows/ci.yml). It has **not** been built on the author's machine (no Docker installed there); the CI badge shows its current status.
+- The Docker image is built and smoke-tested by the [CI workflow](.github/workflows/ci.yml) (the badge shows that workflow's current status; this README does not claim it is passing), **and** it was built and run locally with Docker 29.8.2: 837 MB on disk (219 MB content size, compressed), container healthy, running as the non-root `appuser`, 284.9 s for a cold uncached build. Details and the curl smoke tests: [reports/docker_local_check.md](reports/docker_local_check.md).
 
 ## Quickstart
 
@@ -95,6 +95,8 @@ Grayscale, RGB, RGBA and palette images are accepted and converted exactly as in
 | `DEFECT_WARMUP_RUNS` | 2 | warm-up inferences at startup |
 | `DEFECT_LOG_LEVEL` | INFO | JSON logs on stdout |
 
+`docker-compose.yml` sets the ONNX Runtime threads to intra-op 2 and inter-op 1, the values the container log showed ([reports/docker_local_check.md](reports/docker_local_check.md)), matching the 2 physical cores benchmarked in [reports/latency.md](reports/latency.md). The bare-process default is 0 / 0 (ONNX Runtime chooses).
+
 ## Dataset strategy
 
 Source: the Kaggle "Casting product image data for quality inspection" images: 6,000 JPEGs (3,000 `ok_front`, 3,000 `def_front`), all
@@ -176,6 +178,8 @@ F1 and AUCs use a bootstrap, which is marked *degenerate* when it collapses to a
 
 Pooled OOF PR-AUC 0.988 [0.971, 1.000], ROC-AUC 0.993 [0.982, 1.000]; per-fold PR-AUC 0.963, 1.000, 1.000, 0.998, 1.000 ([reports/cv_summary.json](reports/cv_summary.json)).
 
+**Read the 0.776 row with care:** it is the deployed threshold applied to predictions from five differently calibrated fold models, not the deployed model's own precision.
+
 **CV and test disagree, and I trust CV more.** Test precision at 0.5 is 1.000 but OOF precision at 0.5 is 0.761. The error analysis traces most of that gap to one CV
 fold (25 of the 33 false positives are in fold 2): its model has a normal-class score offset of about +2.65 logits while its ranking is still perfect (PR-AUC 1.000).
 The test set has only 19 defects and 86 normals, so a perfect score is compatible with a true recall as low as 0.82, and the deployed model's epoch was selected on
@@ -193,7 +197,7 @@ Temperature scaling could not fix the fold-2 offset (it cannot move the p = 0.5 
 
 ## Latency and trade-offs
 
-Hardware: Intel i5-7200U (2 physical / 4 logical cores), 15.9 GB RAM, no GPU, Windows 11. Client and server shared the same cores. Full tables: [reports/latency.md](reports/latency.md).
+Hardware: Intel i5-7200U (2 physical / 4 logical cores), 15.9 GB RAM, no GPU, Microsoft Windows 11 Pro (10.0.22621). Client and server shared the same cores. Full tables: [reports/latency.md](reports/latency.md).
 
 | threads | PyTorch eager median / p95 (ms) | ONNX Runtime median / p95 (ms) | ORT end-to-end through HTTP median / p95 (ms) |
 |---|---|---|---|
@@ -202,13 +206,14 @@ Hardware: Intel i5-7200U (2 physical / 4 logical cores), 15.9 GB RAM, no GPU, Wi
 | 4 | 55.3 / 64.8 | 26.2 / 36.5 | 36.3 / 87.7 |
 
 - ONNX Runtime is 1.8-2.1x faster than PyTorch eager at batch size 1; HTTP, upload and JSON add about 4 ms. One worker handles about 36-38 requests/s at 1-2 ORT threads (30 at 4 threads: more ORT threads than physical cores hurt).
-- Cold start is about 2.5 s from process start to `/ready` (bare process; container start-up was not measured).
+- Cold start is about 2.5 s from process start to `/ready` for a bare process (benchmark, [reports/latency.md](reports/latency.md)). Inside the container, the application logged `startup` and `ready` events about 0.93 s apart (model load and warm-up only, in an already-running container; [reports/docker_local_check.md](reports/docker_local_check.md)). That is **not** the total container cold start (container creation, process start and imports are not included), which was not measured.
+- Image size (`docker images`, Docker 29.8.2, local build): 837 MB disk usage (unpacked), 219 MB content size (compressed). A cold uncached build took 284.9 s.
 - **INT8 was rejected.** Dynamic quantization cannot run on this CPU provider (no `ConvInteger` kernel). Static QDQ INT8 is 4x smaller (11.2 vs 44.7 MB) and about 1.5x faster, but logits move by up to 4.08 and probabilities by up to 0.85, 2 of the 105 validation decisions flip at the fixed deployed threshold, and validation precision drops from 1.000 to 0.905 ([reports/quantization.json](reports/quantization.json)). With a threshold that is already fragile to score shifts, that speed-up is not worth re-tuning and re-validating it.
 - Resize matters for parity: the inference code uses PIL bilinear like training; `cv2.resize` would shift probabilities by up to 0.19 (INTER_LINEAR) or 0.43 (INTER_CUBIC) ([reports/preprocess_equivalence.json](reports/preprocess_equivalence.json)). PyTorch and ONNX logits agree to 3.2e-05 and all 105 test decisions match ([reports/export_parity.json](reports/export_parity.json)).
 
 ## Production considerations
 
-- **Versioned model unit.** `model.onnx`, the threshold, normalisation statistics, class names, input-quality ranges, git commit, training run id and the sha256 of `model.onnx` live together in `model_meta.json`. The service reads everything from it and refuses to become ready if the sha256 does not match. Changing the threshold means re-exporting (new `model_version`). Architecture: [docs/architecture.md](docs/architecture.md).
+- **Versioned model unit.** `model.onnx`, the threshold, normalisation statistics, class names, input-quality ranges, git commit, training run id and the sha256 of `model.onnx` live together in `model_meta.json`. The service reads everything from it and refuses to become ready if the sha256 does not match. Changing the threshold means re-exporting (new `model_version`). The committed `model_meta.json` records git commit `a2a8418` with `dirty: true`: the model was exported from an uncommitted working tree, so that commit does not identify the exact source; the sha256 in `model_meta.json` is the authoritative identifier. Architecture: [docs/architecture.md](docs/architecture.md).
 - **Logging.** One JSON object per request on stdout: request id, method, path, status, latency, predicted class, probability, quality warnings, error code. Image bytes are never logged; startup logs the config and model version.
 - **Input-quality guard and its limits.** Mean brightness and Laplacian-variance sharpness are compared with the 1st-99th percentile range of the 490 training images; outside it you get `input_quality.ok = false` and a warning ending "input outside the training range; prediction may be less reliable". It never changes the prediction. It is a coarse risk flag: it warns on 3.9% of training, 4.8% of validation and 7.6% of test images that are normal and correctly classified, and it does **not** flag the two known missed defects ([reports/quality_check_false_alarm_rate.json](reports/quality_check_false_alarm_rate.json)). Behaviour on resolutions other than 300x300 was not evaluated.
 - **Monitoring and drift plan (not implemented).** Track, against a baseline taken from validation: the distribution of `defect_probability` (mean, quantiles, fraction above the threshold), the image statistics (brightness, sharpness, fraction with quality warnings, input resolution), error rates and inspector overrides. Alert on shifts in the *normal-class score distribution*: the error analysis found that failure mode (a score offset) in both the CV folds and the perturbation tests, while ranking mostly survived.
@@ -223,12 +228,12 @@ Hardware: Intel i5-7200U (2 physical / 4 logical cores), 15.9 GB RAM, no GPU, Wi
 - **Two defects the model cannot see** and no defect annotations, so Grad-CAM (7x7 map) could not be scored and per-defect-type recall is unknown.
 - **Sensitive to noise, blur and brightness x1.3**; the quality guard is only a coarse flag.
 - **Group-aware splitting** was not exercised on real duplicates (none fall inside the subsample).
-- **Docker** is verified only by CI (not on the author's machine); the Python 3.11 inference stack was run in a Windows 3.11 virtualenv, not in the Linux image.
+- **Docker** is verified by the CI workflow and by manual curl smoke tests of a locally built and run container ([reports/docker_local_check.md](reports/docker_local_check.md)). The CI workflow runs the torch-free subset of the tests (`tests/api`, preprocessing; the two torch-only checks skip) on a Python 3.11 runner, not inside the container; the same subset passed locally in a Windows 3.11 virtualenv (50 passed, 2 skipped). The complete 88-test suite needs torch and ran on Python 3.12. No pytest run happened inside the Linux image. Total container cold start, memory use and behaviour under load in the container were not measured.
 - **Dataset licence** not verified (below).
 
 ## Reproducing training
 
-Python 3.11, CPU only (4 threads; one run takes about 10-23 minutes, [reports/training_runs.md](reports/training_runs.md)). Seeds: project seed 42 (subsample, splits, training); CV fold k uses seed 42 + k; deterministic algorithms are on.
+Target Python 3.11, but training, evaluation and analysis here were run on **Python 3.12.0**; `requirements.txt` has not been installed or run on 3.11 (only the inference stack has). CPU only (4 threads; one run takes about 10-23 minutes, [reports/training_runs.md](reports/training_runs.md)). Seeds: project seed 42 (subsample, splits, training); CV fold k uses seed 42 + k; deterministic algorithms are on.
 
 ```bash
 pip install -r requirements.txt

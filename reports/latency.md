@@ -5,7 +5,7 @@
 ## Hardware / software
 
 - CPU: Intel(R) Core(TM) i5-7200U CPU @ 2.50GHz (2 physical / 4 logical cores), 15.9 GB RAM, no GPU
-- OS: Windows-11-10.0.22621-SP0
+- OS: Microsoft Windows 11 Pro (version 10.0.22621)
 - Client/benchmark Python 3.12.0 (torch 2.6.0+cpu); API server Python 3.11.2, onnxruntime 1.20.1
 - Client and server run on the same machine and share the same cores, so API figures include that contention.
 
@@ -37,7 +37,9 @@ Throughput with concurrent clients (160 requests per level; requests/s, and clie
 | 2 | 25.7 rps (p95 43) | 30.9 rps (p95 70) | 35.3 rps (p95 142) | 35.8 rps (p95 291) |
 | 4 | 26.1 rps (p95 46) | 27.0 rps (p95 109) | 24.5 rps (p95 255) | 30.0 rps (p95 403) |
 
-Cold start is the process start of the server in this environment (Python import, session creation, 2 warm-up inferences); a container adds image pull and start-up time that I could **not** measure (Docker was not available).
+Cold start here is the process start of the server as a bare process in a Python 3.11 environment (Python import, session creation, 2 warm-up inferences); every number in this file comes from bare processes, none from inside a container.
+
+**Container (separate local check, see [docker_local_check.md](docker_local_check.md)).** Inside the running container the application logged its `startup` and `ready` events about 0.93 s apart (model load and warm-up only). That is **not** the total container cold start, which was not measured. Image size (`docker images`, Docker 29.8.2): 837 MB disk usage (unpacked), 219 MB content size (compressed); a cold uncached build took 284.9 s. The `latency_ms` values from the container smoke tests are single requests, not a benchmark.
 
 ## 3. INT8 quantisation experiment (optional; not deployed)
 

@@ -2,7 +2,7 @@ name: CI
 
 # Job 1 runs the torch-free inference test-suite on Python 3.11.
 # Job 2 builds the Docker image, starts the container and smoke-tests it over HTTP.
-# This is where the Docker image is verified: the author's machine has no Docker.
+# The same image was also built and run locally by the author (see reports/docker_local_check.md).
 
 on:
   push:

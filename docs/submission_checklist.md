@@ -49,18 +49,19 @@
 | Parity test (script + pytest) and preprocessing equivalence incl. PIL vs cv2 | `scripts/export_onnx.py`, `tests/test_export_parity.py`, `reports/export_parity.json`, `reports/preprocess_equivalence.json` | Verified (105/105 decisions identical, max logit diff 3.2e-05, tensors bit-identical) |
 | FastAPI: `/predict`, `/health`, `/ready`, `/model-info`, `/predict/batch`, validation, error codes, quality check, JSON logs, env settings | `api/`, README "API usage" | Verified (38 API tests; real curl against the server on Python 3.12 and 3.11) |
 | API tests | `tests/api/` | Verified (also run in a clean Python 3.11 venv without torch) |
-| Dockerfile (multi-stage, 3.11-slim, non-root, HEALTHCHECK), `.dockerignore`, compose, separate requirements | `Dockerfile`, `.dockerignore`, `docker-compose.yml`, `requirements-inference.txt` | **Unverified**: Docker is not installed on the dev machine. Compose parses; the image was never built or run locally; image size and container cold start are unmeasured; `libgomp1` in the Dockerfile is an untested precaution |
+| Dockerfile (multi-stage, 3.11-slim, non-root, HEALTHCHECK), `.dockerignore`, compose, separate requirements | `Dockerfile`, `.dockerignore`, `docker-compose.yml`, `requirements-inference.txt` | **Verified locally (manual smoke tests, [reports/docker_local_check.md](../reports/docker_local_check.md)); the CI workflow also builds and smoke-tests the image (I did not check whether that workflow has passed: see the badge).** Local build with Docker 29.8.2: cold uncached build 284.9 s, image 837 MB disk usage / 219 MB content size, container healthy, running as non-root `appuser`, curl tests (health, defective prediction, 415, quality warning, 400) behaved as documented. **Not measured:** total container cold start (only the 0.93 s application startup-to-ready inside the running container), memory, load; the pytest suite was not run inside the container. Whether `libgomp1` is actually required was not tested (the image built and ran with it) |
 | Latency report incl. PyTorch vs ONNX Runtime, end-to-end HTTP, concurrency, INT8 | `reports/latency.md`, `reports/quantization.json` | Verified (one machine: i5-7200U, 2 cores / 4 threads; INT8 rejected) |
-| Example predictions, curl commands | `examples/` | Verified (16 images; the licence of the images is unverified) |
+| Example predictions, curl commands | `examples/` | Verified (16 images); the licence of the images is **NOT verified** |
 | Task runner | `tasks.py`, `Makefile` | **Partly verified**: `python tasks.py test` and `python tasks.py serve` were run through the runner; the other targets were run as direct script calls, not through the runner (`export` and `data` would overwrite artifacts, so I did not re-run them). The `Makefile` was never run (no `make` on the machine) |
 
 ## Step 5: CI, documentation, polish
 
 | requirement | where | status |
 |---|---|---|
+| Local Docker verification record | `reports/docker_local_check.md` | Transcribed from the author's terminal output (not machine-generated; raw logs are not stored in the repo) |
 | `python-multipart` in inference requirements | `requirements-inference.txt` | Verified (it was added in Step 4; FastAPI needs it for uploads) |
-| CI: inference tests on 3.11, Docker build, container run, `/ready` wait, `/health`, `/predict` schema check, image size | `.github/workflows/ci.yml`, `scripts/check_predict_response.py` | **Unverified on GitHub: the workflow has not run.** The YAML parses; the test job's commands passed locally in a clean Python 3.11 venv from an export of only the tracked files (50 passed, 2 skipped); the container job's HTTP steps passed against a server started from that export (not in Docker); strict mode was shown to fail when the model is missing. The Docker build/run steps themselves are untested |
-| CI badge | README top | Points at `musharibnadeem4/defect-detection-` (from the `origin` remote); it shows nothing meaningful until the workflow runs |
+| CI: inference tests on 3.11, Docker build, container run, `/ready` wait, `/health`, `/predict` schema check, image size | `.github/workflows/ci.yml`, `scripts/check_predict_response.py` | **Not checked by me: whether this workflow has run or passed on GitHub.** The YAML parses; the test job's commands passed locally in a clean Python 3.11 venv from an export of only the tracked files (50 passed, 2 skipped); the container job's HTTP steps passed against a server started from that export (not in Docker); strict mode was shown to fail when the model is missing. I did not run the workflow's own Docker steps (including the health-check wait loop and `check_predict_response.py` against the container); the same kinds of checks (health, predict, 415, 400, non-root) were done manually against the local container |
+| CI badge | README top | Points at `musharibnadeem4/defect-detection-`, which matches `git remote get-url origin`; it shows the workflow's current status, and this checklist does not claim it is passing |
 | README structured around the criteria | `README.md` | Verified (every number checked against a file in `reports/` or `examples/`) |
 | Architecture diagram: Mermaid + rendered image | `docs/architecture.md`, `docs/architecture.mmd`, `.png`, `.svg` | Verified (rendered with mermaid-cli 11.4.2 and inspected) |
 | Video script (2:30-3:00) | `docs/video_script.md` | Verified; brief's segment lengths summed to 3:20, so five segments were shortened (total 2:55) |
@@ -76,7 +77,7 @@
 - Nothing tracked under `data/` besides `.gitkeep`; no `.pt`/`.pth`/`.ckpt`/`.joblib` tracked.
 
 ## Things to do before submitting
-1. Push and let the CI workflow run; **fix whatever it reports** (Docker build, `libgomp1`/OpenCV system libraries, healthcheck timing are the likeliest places).
+1. Check the CI run in the Actions tab (or the badge) and **fix whatever it reports**. The Docker build and runtime were already confirmed locally, so the remaining CI risks are in the workflow's own commands (health-check wait timing, runner differences).
 2. Decide on the dataset licence question for `examples/images/` and `artifacts/model.onnx` (44.7 MB committed; consider Git LFS).
 3. Check the brief (PDF) against this list.
 4. Re-export after the final commit if you want `model_meta.json` to record a clean git state.
