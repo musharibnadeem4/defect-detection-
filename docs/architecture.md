@@ -5,7 +5,7 @@ Two flows share one artifact: the **offline** pipeline builds a versioned model 
 
 ![architecture](architecture.png)
 
-*(SVG version: [architecture.svg](architecture.svg). Both are rendered from [architecture.mmd](architecture.mmd).)*
+*(The PNG was rendered from the Mermaid diagram below.)*
 
 ## Mermaid source
 
@@ -71,8 +71,9 @@ flowchart LR
 
 ## Re-rendering the diagram
 
+Copy the Mermaid block above (without the fences) into a file, for example `diagram.mmd`, and render it:
+
 ```bash
-npx -y @mermaid-js/mermaid-cli@11.4.2 -i docs/architecture.mmd -o docs/architecture.png -s 2 -b white
-npx -y @mermaid-js/mermaid-cli@11.4.2 -i docs/architecture.mmd -o docs/architecture.svg -b white
+npx -y @mermaid-js/mermaid-cli@11.4.2 -i diagram.mmd -o docs/architecture.png -s 2 -b white
 ```
 (On a machine with Chrome but no Puppeteer browser download, add `-p puppeteer.json` with `{"executablePath": "<path to chrome>", "args": ["--no-sandbox"]}`.)

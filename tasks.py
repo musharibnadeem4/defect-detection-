@@ -1,4 +1,4 @@
-"""Task runner (cross-platform; the Makefile just delegates here).  Usage: python tasks.py <task> [<task> ...]
+"""Task runner (cross-platform; the only one in this repo).  Usage: python tasks.py <task> [<task> ...]
 
   setup         pip install -r requirements.txt
   data          build the stand-in dataset (data/raw + manifest) and the group-aware splits + normalisation stats

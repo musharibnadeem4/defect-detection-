@@ -20,9 +20,9 @@ ROOT = Path(__file__).resolve().parents[2]
 ARTIFACTS = ROOT / "artifacts"
 EXAMPLES = ROOT / "examples" / "images"
 
-# CI sets CI_REQUIRE_ARTIFACTS=1: a missing model unit or example image then FAILS the run instead of silently
-# skipping every test (an all-skipped suite would look green).
-STRICT = bool(os.environ.get("CI_REQUIRE_ARTIFACTS"))
+# Opt-in strict mode: with REQUIRE_ARTIFACTS=1 a missing model unit or example image FAILS the run instead of
+# silently skipping every test (an all-skipped suite would look green).
+STRICT = bool(os.environ.get("REQUIRE_ARTIFACTS"))
 MISSING = [p.name for p in (ARTIFACTS / "model.onnx", ARTIFACTS / "model_meta.json") if not p.exists()]
 
 need_artifacts = pytest.mark.skipif(
@@ -31,9 +31,9 @@ need_artifacts = pytest.mark.skipif(
 
 
 @pytest.fixture(scope="session", autouse=True)
-def _require_artifacts_in_ci():
+def _require_artifacts_when_strict():
     if STRICT and MISSING:
-        pytest.fail(f"CI_REQUIRE_ARTIFACTS is set but artifacts are missing: {MISSING}")
+        pytest.fail(f"REQUIRE_ARTIFACTS is set but artifacts are missing: {MISSING}")
 
 
 def example(prefix: str) -> Path:

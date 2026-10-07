@@ -40,7 +40,7 @@ PR-AUC 1.000 [1.00, 1.00] *degenerate*; ROC-AUC 1.000 [1.00, 1.00] *degenerate*.
 ## 5-fold CV of the chosen configuration (train+val only, 5 epochs/fold = the chosen run's best epoch, same LR schedule, no early stopping)
 
 - OOF PR-AUC 0.988, ROC-AUC 0.993 on 595 images; per-fold PR-AUC 0.963, 1.000, 1.000, 0.998, 1.000 (mean 0.992 ± 0.015)
-- OOF @0.5: recall 0.981, precision 0.761; @validation threshold 0.7760: recall 0.981, precision 0.938
+- OOF @0.5: recall 0.981, precision 0.761; @validation threshold 0.7760: recall 0.981, precision 0.938 (the deployed threshold applied to predictions from five differently calibrated fold models, not the deployed model's own precision)
 - Predictions: `reports/oof_predictions.csv`
 
 ## Leakage probe (pixel RMSE, 64x64 grayscale, 0-255 scale)

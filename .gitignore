@@ -37,3 +37,8 @@ artifacts/*
 # stray manual-test files
 fake.*
 examples/images/fake.*
+
+# Personal interview / recording prep (kept on disk, not versioned)
+docs/interview_prep.md
+docs/video_script.md
+docs/submission_checklist.md

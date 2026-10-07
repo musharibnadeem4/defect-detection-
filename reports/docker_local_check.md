@@ -23,8 +23,7 @@ The image is built from `Dockerfile` (base `python:3.11-slim`, inference depende
 | `defect-detection-api:latest` | **837 MB** | **219 MB** |
 
 Two numbers because `docker images` reports two sizes: *disk usage* is the unpacked image on disk (all layers extracted), *content size* is the compressed image content (roughly what a
-registry pull transfers). The CI workflow prints the value of `docker image inspect --format '{{.Size}}'`; I have not checked which of the two columns that corresponds to under Docker's image store,
-so do not compare the CI figure with these without checking.
+registry pull transfers). The two figures are not interchangeable; the README quotes both and labels them.
 
 ## Running container
 
@@ -61,6 +60,6 @@ The predictions agree with the examples recorded earlier from a non-Docker serve
 ## What this does and does not show
 
 - `latency_ms` values (60.66 ms and the 39.88 ms in the log line) are **single requests, not a benchmark**. The benchmark is `reports/latency.md`, measured on a bare process, not in a container.
-- The Python 3.11 Linux image was exercised **only by these manual calls plus whatever the CI workflow runs**. The full pytest suite was **not** run inside the container: the CI workflow runs the
-  torch-free tests on a Python 3.11 runner (on the runner, not in the image), and the container job only builds the image and smoke-tests it over HTTP.
-- Not measured: total container cold start, memory use, behaviour under load in the container, and whether the CI runner's build matches this local build.
+- The Python 3.11 Linux image was exercised **only by these manual calls**. No pytest run happened inside the container. (The torch-free test subset was run separately in a Windows Python 3.11
+  virtualenv: 50 passed, 2 skipped; that is not the Linux image.)
+- Not measured: total container cold start, memory use, behaviour under load in the container.

@@ -1,5 +1,8 @@
-"""Validate the JSON returned by POST /predict (standard library only, so CI can run it anywhere).
+"""Manual smoke-check script: validate a saved JSON response from POST /predict (standard library only, so it runs
+without the project's dependencies).
 
+  curl -s -X POST http://localhost:8000/predict -F "file=@examples/images/01_defect_correct_cast_def_0_7896.jpeg;type=image/jpeg" -o response.json
+  curl -s http://localhost:8000/model-info -o model_info.json
   python scripts/check_predict_response.py response.json [--expect defective|normal] [--model-info model_info.json]
 
 Exits non-zero with a message on the first problem. Checks the exact key set, types, value ranges and the internal
